@@ -1,138 +1,53 @@
-# Verus Miner
+# Verus Miner — Termux
 
-Installer sederhana untuk menjalankan **ccminer VerusHash** di Termux pada perangkat Android ARM64.
+Installer sederhana untuk menjalankan **ccminer VerusHash** pada Android ARM64 melalui Termux.
 
-Repository ini mengunduh binary `ccminer` ARM64 dari upstream Darktron saat proses instalasi, lalu membuat konfigurasi mining secara otomatis.
+## Instalasi dari Termux baru
 
-## 1. Persyaratan
+Setelah Termux selesai di-install, buka Termux lalu jalankan **3 perintah ini**:
 
-- Android **7.0 atau lebih baru**
-- Perangkat **ARM64 / arm64-v8a**
-- Koneksi internet
-- Wallet Verus (VRSC)
-- Termux dari sumber resmi
-
-> **Penting:** Jangan mencampur Termux dari sumber yang berbeda. Jika sebelumnya memasang Termux dari sumber lain, hapus Termux terlebih dahulu sebelum memasang versi dari sumber baru. Aplikasi dan plugin Termux dari sumber berbeda menggunakan signature yang berbeda.
-
-## 2. Install Termux
-
-Gunakan salah satu sumber resmi berikut:
-
-### Pilihan yang disarankan: F-Droid
-
-Buka halaman Termux di F-Droid dan install aplikasi **Termux**.
-
-https://f-droid.org/en/packages/com.termux/
-
-### Alternatif: GitHub resmi Termux
-
-https://github.com/termux/termux-app/releases
-
-Untuk Android 7 atau lebih baru, pilih varian **apt-android-7** jika tersedia.
-
-> Setelah Termux terpasang, buka Termux dan lanjutkan ke langkah berikutnya.
-
-## 3. Persiapan pertama Termux
-
-Jalankan perintah berikut satu per satu:
-
-```sh
-pkg update -y
-pkg upgrade -y
-pkg install -y wget
+```bash
+pkg update -y && pkg install -y wget
+wget -q --show-progress https://raw.githubusercontent.com/ajiajiku/verus-miner/main/install.sh -O install.sh
+chmod +x install.sh && ./install.sh
 ```
 
-Jika Termux menanyakan konfirmasi, pilih `y` lalu tekan **Enter**.
-
-## 4. Download installer Verus Miner
-
-Jalankan:
-
-```sh
-wget -O install.sh https://raw.githubusercontent.com/ajiajiku/verus-miner/main/install.sh
-```
-
-Kemudian buat installer dapat dijalankan:
-
-```sh
-chmod +x install.sh
-```
-
-## 5. Jalankan instalasi
-
-Jalankan:
-
-```sh
-./install.sh
-```
-
-Installer akan otomatis:
-
-1. Memperbarui package Termux.
-2. Memasang library yang diperlukan.
-3. Mengunduh binary `ccminer` ARM64.
-4. Mendeteksi jumlah core/thread CPU perangkat.
-5. Membuat `config.json`.
-6. Meminta alamat wallet Verus.
-7. Meminta nama worker.
-8. Membuat `start.sh`.
-9. Mengaktifkan mining otomatis ketika Termux dibuka.
-10. Langsung menjalankan miner setelah instalasi selesai.
-
-## 6. Saat diminta Wallet dan Worker
-
-Installer akan menampilkan:
+Installer kemudian meminta:
 
 ```text
 Wallet Verus:
 Worker [android]:
 ```
 
-Masukkan alamat wallet Verus Anda, kemudian nama worker.
+Masukkan alamat wallet Verus Anda. Untuk Worker cukup tekan **Enter** jika ingin menggunakan nama `android`.
 
-Contoh:
+Setelah itu installer otomatis:
 
-```text
-Wallet Verus: Rxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-Worker [android]: hp1
-```
+- memasang library yang diperlukan
+- mengunduh ccminer ARM64
+- mendeteksi jumlah thread CPU
+- membuat konfigurasi mining
+- membuat `start.sh`
+- mengaktifkan mining otomatis ketika Termux dibuka kembali
+- langsung menjalankan mining
 
-Jika nama worker dikosongkan, otomatis digunakan nama `android`.
+## Setelah instalasi
 
-## 7. Setelah instalasi selesai
+Tidak perlu menjalankan perintah mining lagi. Setiap kali Termux dibuka, miner otomatis berjalan.
 
-Miner akan langsung berjalan dan menampilkan proses seperti:
-
-```text
-accepted: 24/24
-3147.02 kH/s yes!
-```
-
-Hashrate dapat berubah-ubah karena beban CPU, suhu perangkat, throttling, dan kondisi perangkat.
-
-**Jangan menilai hashrate hanya dari satu baris.** Biarkan miner berjalan beberapa menit untuk melihat performa yang lebih stabil.
-
-## 8. Mining otomatis saat Termux dibuka
-
-Installer menambahkan perintah startup ke `~/.bashrc`.
-
-Setelah instalasi selesai, setiap kali Termux dibuka, miner akan otomatis dijalankan.
-
-Untuk menghentikan mining, tekan:
+Untuk menghentikan mining:
 
 ```text
 CTRL + C
 ```
 
-## 9. Lokasi file miner
+Untuk menjalankan kembali secara manual:
 
-Semua file miner berada di:
-
-```text
-~/verus-miner/
+```bash
+~/verus-miner/start.sh
 ```
 
-File utama:
+## File miner
 
 ```text
 ~/verus-miner/ccminer
@@ -140,40 +55,14 @@ File utama:
 ~/verus-miner/start.sh
 ```
 
-Untuk menjalankan miner secara manual:
+## Persyaratan
 
-```sh
-~/verus-miner/start.sh
-```
+- Android 7.0 atau lebih baru
+- Perangkat ARM64 / arm64-v8a
+- Termux
+- Internet
+- Wallet Verus (VRSC)
 
-## 10. Cek konfigurasi
+Hashrate aktual bergantung pada CPU, suhu perangkat, thermal throttling, dan beban perangkat.
 
-Untuk melihat konfigurasi:
-
-```sh
-cat ~/verus-miner/config.json
-```
-
-Untuk melihat jumlah thread CPU yang tersedia:
-
-```sh
-nproc
-```
-
-## 11. Catatan performa
-
-Versi installer ini menggunakan seluruh thread CPU yang dilaporkan oleh `nproc`.
-
-Hashrate VerusHash sangat bergantung pada model CPU, jumlah core, suhu, governor CPU, thermal throttling, dan beban perangkat lain. Karena itu hasil antar perangkat dapat berbeda.
-
-Mining terus-menerus juga dapat meningkatkan suhu, konsumsi baterai, dan keausan baterai/perangkat.
-
-## Upstream
-
-Binary `ccminer` ARM64 yang digunakan berasal dari:
-
-https://github.com/Darktron/pre-compiled
-
-Repository ini hanya menyediakan installer dan konfigurasi yang lebih sederhana untuk penggunaan di Termux.
-
-Gunakan software ini dengan risiko Anda sendiri.
+Binary ccminer ARM64 diambil saat instalasi dari upstream Darktron/pre-compiled.
