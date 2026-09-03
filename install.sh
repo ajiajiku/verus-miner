@@ -17,8 +17,21 @@ printf "Worker [android]: "
 read -r WORKER
 WORKER=${WORKER:-android}
 
-# Setting baseline yang terbukti bekerja pada setup sebelumnya.
-THREADS=8
+printf "Threads [8]: "
+read -r THREADS
+THREADS=${THREADS:-8}
+
+# Pastikan jumlah thread berupa angka positif.
+case "$THREADS" in
+  ''|*[!0-9]*)
+    echo "Jumlah thread harus berupa angka."
+    exit 1
+    ;;
+esac
+if [ "$THREADS" -lt 1 ]; then
+  echo "Jumlah thread minimal 1."
+  exit 1
+fi
 
 cat > "$DIR/config.json" <<EOF
 {
@@ -26,16 +39,16 @@ cat > "$DIR/config.json" <<EOF
   "user":"${WALLET}.${WORKER}",
   "pass":"x",
   "algo":"verus",
-  "threads":8,
+  "threads":${THREADS},
   "cpu-priority":1,
   "cpu-affinity":-1,
   "retry-pause":10
 }
 EOF
 
-cat > "$DIR/start.sh" <<'EOF'
+cat > "$DIR/start.sh" <<EOF
 #!/data/data/com.termux/files/usr/bin/bash
-exec "$HOME/verus-miner/ccminer" -a verus -o stratum+tcp://sg.vipor.net:5040 -c "$HOME/verus-miner/config.json" -p x --cpu-priority 1 --cpu-affinity -1 -t 8
+exec "$HOME/verus-miner/ccminer" -a verus -o stratum+tcp://sg.vipor.net:5040 -c "$HOME/verus-miner/config.json" -p x --cpu-priority 1 --cpu-affinity -1 -t $THREADS
 EOF
 chmod +x "$DIR/start.sh"
 
@@ -43,6 +56,6 @@ LINE='[ -x "$HOME/verus-miner/start.sh" ] && "$HOME/verus-miner/start.sh"'
 touch "$HOME/.bashrc"
 grep -qxF "$LINE" "$HOME/.bashrc" 2>/dev/null || echo "$LINE" >> "$HOME/.bashrc"
 
-echo "Verus Miner terpasang — 8 thread CPU, SG-VIPOR."
+echo "Verus Miner terpasang — $THREADS thread CPU, SG-VIPOR."
 echo "Mining otomatis saat Termux dibuka."
 exec "$DIR/start.sh"
