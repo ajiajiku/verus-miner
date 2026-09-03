@@ -25,7 +25,10 @@ Setelah itu installer otomatis:
 
 - memasang library yang diperlukan
 - mengunduh ccminer ARM64
-- mendeteksi jumlah thread CPU
+- menggunakan 8 thread CPU
+- menggunakan CPU priority 1
+- menggunakan CPU affinity -1 (tidak membatasi core)
+- menggunakan pool SG-VIPOR (`sg.vipor.net:5040`)
 - membuat konfigurasi mining
 - membuat `start.sh`
 - mengaktifkan mining otomatis ketika Termux dibuka kembali
@@ -66,3 +69,5 @@ Untuk menjalankan kembali secara manual:
 Hashrate aktual bergantung pada CPU, suhu perangkat, thermal throttling, dan beban perangkat.
 
 Binary ccminer ARM64 diambil saat instalasi dari upstream Darktron/pre-compiled.
+
+Konfigurasi 8 thread, priority 1, affinity -1 dan SG-VIPOR dipilih untuk mereplikasi baseline setup ccminer yang sebelumnya digunakan dan terbukti berjalan baik pada perangkat pengujian.
