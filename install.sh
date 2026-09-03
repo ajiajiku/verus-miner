@@ -17,13 +17,17 @@ printf "Worker [android]: "
 read -r WORKER
 WORKER=${WORKER:-android}
 
+# Gunakan seluruh core CPU seperti konfigurasi ccminer sumber.
+THREADS=$(nproc)
+[ "$THREADS" -lt 1 ] && THREADS=1
+
 cat > "$DIR/config.json" <<EOF
 {
   "pools": [{"name":"VIPOR","url":"stratum+tcp://us.vipor.net:5040","timeout":180,"disabled":0}],
   "user":"${WALLET}.${WORKER}",
   "pass":"",
   "algo":"verus",
-  "threads":0,
+  "threads":${THREADS},
   "cpu-priority":1,
   "cpu-affinity":-1,
   "retry-pause":10
@@ -40,6 +44,6 @@ LINE='[ -x "$HOME/verus-miner/start.sh" ] && "$HOME/verus-miner/start.sh"'
 touch "$HOME/.bashrc"
 grep -qxF "$LINE" "$HOME/.bashrc" 2>/dev/null || echo "$LINE" >> "$HOME/.bashrc"
 
-echo "Verus Miner selesai dipasang."
-echo "Mining akan otomatis mulai saat Termux dibuka."
+echo "Verus Miner terpasang — $THREADS thread CPU."
+echo "Mining otomatis saat Termux dibuka."
 exec "$DIR/start.sh"
